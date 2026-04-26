@@ -1,6 +1,9 @@
 package main;
 
-public static class FinancialMetricsAggregator {
+import java.util.Collection;
+import java.math.BigDecimal;
+
+public  class FinancialMetricsAggregator {
     public static BigDecimal calculateDeposits(Collection<Transaction> transactions) {
         // TODO: Implement logic to sum all deposit transactions
         return BigDecimal.ZERO; // Placeholder return value
