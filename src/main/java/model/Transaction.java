@@ -1,5 +1,4 @@
-package main;
-import main.TransactionSpec;
+package model;
 
 public class Transaction {
     private static int counter = 0;
@@ -10,25 +9,21 @@ public class Transaction {
         this.id = generateValidID();
         this.spec = spec;
     }
-    public int getID()
-    {
+
+    public int getID() {
         return id;
     }
 
-    public TransactionSpec getSpec()
-    {
+    public TransactionSpec getSpec() {
         return new TransactionSpec(
-            spec.getAmount(),
+                spec.getAmount(),
                 spec.getDate(),
                 spec.getDescription(),
-                spec.getProperties()
-       );
+                spec.getProperties());
     }
 
-    private int generateValidID()
-    {
+    private int generateValidID() {
         return counter++;
     }
 
 }
-

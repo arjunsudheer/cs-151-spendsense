@@ -1,3 +1,11 @@
-lib
-.vscode.idea/
+# IDE configuration files
+.vscode/
+.idea/
 out/
+
+# Libraries and binaries
+lib
+bin
+
+# MacOS system files
+.DS_Store

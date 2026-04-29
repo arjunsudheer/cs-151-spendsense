@@ -1,7 +1,7 @@
-package main;
+package model;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -22,11 +22,11 @@ public class TransactionSpec {
         this.description = description;
         this.properties = properties;
 
-        if(!isValidAmpunt(amount))
-        {
+        if (!isValidAmpunt(amount)) {
             throw new IllegalArgumentException("Amount has to be non-zero");
         }
     }
+
     public BigDecimal getAmount() {
         return amount;
     }
@@ -38,22 +38,21 @@ public class TransactionSpec {
     public String getDescription() {
         return description;
     }
+
     public Map<String, String> getProperties() {
         return properties;
     }
-    public String get(String key)
-    {
+
+    public String get(String key) {
         return properties.get(key);
     }
-    public boolean isSpending()
-    {
+
+    public boolean isSpending() {
         return amount.compareTo(BigDecimal.ZERO) < 0;
     }
-    private boolean isValidAmpunt(BigDecimal amount)
-    {
+
+    private boolean isValidAmpunt(BigDecimal amount) {
         return amount != null && amount.compareTo(BigDecimal.ZERO) != 0;
     }
-
-
 
 }
