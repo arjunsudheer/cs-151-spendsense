@@ -15,8 +15,12 @@ import java.util.Optional;
 public class PopupInputNotifier implements InputNotifier {
 
     @Override
-    public Optional<Pair<String, String>> pushInputPrompt(String title, String header, String field1Name,
-            String field2Name) {
+    public Optional<Pair<String, String>> pushInputPrompt(
+            String title,
+            String header,
+            String field1Name,
+            String field2Name
+    ) {
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle(title);
         dialog.setHeaderText(header);
@@ -24,15 +28,16 @@ public class PopupInputNotifier implements InputNotifier {
         ButtonType submitButtonType = new ButtonType("Submit", ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(submitButtonType, ButtonType.CANCEL);
 
+        TextField field1 = new TextField();
+        field1.setPromptText(field1Name);
+
+        TextField field2 = new TextField();
+        field2.setPromptText(field2Name);
+
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-
-        TextField field1 = new TextField();
-        field1.setPromptText(field1Name);
-        TextField field2 = new TextField();
-        field2.setPromptText(field2Name);
+        grid.setPadding(new Insets(20, 100, 10, 10));
 
         grid.add(new Label(field1Name + ":"), 0, 0);
         grid.add(field1, 1, 0);
@@ -42,19 +47,20 @@ public class PopupInputNotifier implements InputNotifier {
         Node submitButton = dialog.getDialogPane().lookupButton(submitButtonType);
         submitButton.setDisable(true);
 
-        field1.textProperty().addListener((observable, oldValue, newValue) -> {
-            submitButton.setDisable(newValue.trim().isEmpty() || field2.getText().trim().isEmpty());
-        });
-        field2.textProperty().addListener((observable, oldValue, newValue) -> {
-            submitButton.setDisable(newValue.trim().isEmpty() || field1.getText().trim().isEmpty());
-        });
+        field1.textProperty().addListener((obs, oldValue, newValue) ->
+                submitButton.setDisable(newValue.trim().isEmpty() || field2.getText().trim().isEmpty())
+        );
+
+        field2.textProperty().addListener((obs, oldValue, newValue) ->
+                submitButton.setDisable(newValue.trim().isEmpty() || field1.getText().trim().isEmpty())
+        );
 
         dialog.getDialogPane().setContent(grid);
         Platform.runLater(field1::requestFocus);
 
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == submitButtonType) {
-                return new Pair<>(field1.getText(), field2.getText());
+        dialog.setResultConverter(button -> {
+            if (button == submitButtonType) {
+                return new Pair<>(field1.getText().trim(), field2.getText().trim());
             }
             return null;
         });

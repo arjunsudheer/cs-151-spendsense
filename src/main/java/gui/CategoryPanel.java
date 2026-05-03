@@ -114,10 +114,32 @@ public class CategoryPanel extends VBox {
     private void addCategory() {
         Optional<Pair<String, String>> result = inputNotifier.pushInputPrompt(
                 "Add Category", "Enter Category Details", "Name", "Limit");
+
         result.ifPresent(pair -> {
             try {
-                budgetManager.addSpendingCategory(pair.getKey().trim(), new BigDecimal(pair.getValue().trim()));
-                SliderInfoNotifier.getInstance().pushNotification("Added category: " + pair.getKey());
+                String categoryName = pair.getKey().trim();
+                BigDecimal categoryLimit = new BigDecimal(pair.getValue().trim());
+
+                if (categoryLimit.compareTo(BigDecimal.ZERO) < 0) {
+                    PopupInfoNotifier.getInstance().pushNotification("Category limit cannot be negative.");
+                    return;
+                }
+
+                if (budgetManager.wouldExceedOverallBudgetWithCategoryLimit(categoryLimit)) {
+                    boolean continueAnyway = confirmNotifier.pushPrompt(
+                            "This category limit makes total category limits exceed your overall budget. Continue anyway?"
+                    );
+
+                    if (!continueAnyway) {
+                        return;
+                    }
+                }
+
+                budgetManager.addSpendingCategory(categoryName, categoryLimit);
+                SliderInfoNotifier.getInstance().pushNotification("Added category: " + categoryName);
+
+            } catch (NumberFormatException e) {
+                PopupInfoNotifier.getInstance().pushNotification("Invalid category limit.");
             } catch (Exception e) {
                 PopupInfoNotifier.getInstance().pushNotification("Error adding category. Check your input.");
             }

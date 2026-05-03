@@ -72,6 +72,7 @@ public class BudgetManager implements BudgetObserver {
     }
 
     private boolean spendingCategoryExists(String categoryName) {
+
         return spendingCategories.containsKey(categoryName);
     }
 
@@ -83,7 +84,24 @@ public class BudgetManager implements BudgetObserver {
         return allTransactions;
     }
 
+    public BigDecimal getTotalCategoryLimits() {
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (SpendingCategory category : spendingCategories.values()) {
+            total = total.add(category.getMonthlySpendingLimit());
+        }
+
+        return total;
+    }
+
+    public boolean wouldExceedOverallBudgetWithCategoryLimit(BigDecimal newLimit) {
+        return getTotalCategoryLimits()
+                .add(newLimit)
+                .compareTo(overallMonthlyBudget) > 0;
+    }
+
     public Collection<SpendingCategory> getCategories() {
+
         return spendingCategories.values();
     }
 }

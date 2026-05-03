@@ -1,9 +1,9 @@
 package notification;
 
-import org.junit.jupiter.api.Test;
-
+import notification.info.InfoNotifier;
 import notification.info.PopupInfoNotifier;
 import notification.info.SliderInfoNotifier;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,5 +23,14 @@ public class InfoNotifierTest {
         SliderInfoNotifier instance2 = SliderInfoNotifier.getInstance();
         assertNotNull(instance1);
         assertSame(instance1, instance2, "SliderInfoNotifier should be a singleton");
+    }
+
+    @Test
+    public void testInfoNotifierPolymorphism() {
+        InfoNotifier popup = PopupInfoNotifier.getInstance();
+        assertNotNull(popup);
+
+        InfoNotifier slider = SliderInfoNotifier.getInstance();
+        assertNotNull(slider);
     }
 }

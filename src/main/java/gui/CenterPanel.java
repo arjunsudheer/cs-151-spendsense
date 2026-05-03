@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
@@ -18,6 +19,9 @@ import notification.input.InputNotifier;
 import notification.input.PopupInputNotifier;
 import java.math.BigDecimal;
 import java.util.Optional;
+import command.Command;
+import command.RemoveTransactionCommand;
+import command.UpdateBudgetCommand;
 
 public class CenterPanel extends VBox {
     private Label budgetLabel;
@@ -28,6 +32,7 @@ public class CenterPanel extends VBox {
     private BudgetManager budgetManager;
     private SpendingCategory currentCategory;
     private boolean isTotalView = false;
+    private boolean wasOverBudget = false;
 
     private InputNotifier inputNotifier;
     private ConfirmNotifier confirmNotifier;
@@ -58,13 +63,19 @@ public class CenterPanel extends VBox {
 
         // Transaction Table
         transactionTable = createTransactionTable();
+        transactionTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        VBox.setVgrow(transactionTable, Priority.ALWAYS);
 
         // Breakdown Table
         breakdownTable = createBreakdownTable();
+        breakdownTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        VBox.setVgrow(breakdownTable, Priority.ALWAYS);
         breakdownTable.setVisible(false);
         breakdownTable.setManaged(false);
 
         txBtnBox = new HBox(5);
+        txBtnBox.setMaxWidth(Double.MAX_VALUE);
+
         Button addTxBtn = new Button("Add Transaction");
         addTxBtn.setOnAction(e -> addTransaction());
         Button rmTxBtn = new Button("Remove Transaction");
@@ -184,15 +195,26 @@ public class CenterPanel extends VBox {
 
         budgetLabel.setText(String.format("Overall Budget: $%.2f", budgetManager.getOverallMonthlyLimit()));
 
-        BigDecimal totalSpending = FinancialMetricsAggregator.calculateSpending(budgetManager.collectAllTransactions());
+        BigDecimal totalSpending = FinancialMetricsAggregator.calculateSpending(
+                budgetManager.collectAllTransactions());
+
         spendingLabel.setText(String.format("Current Spending: $%.2f", totalSpending));
 
-        if (totalSpending.compareTo(budgetManager.getOverallMonthlyLimit()) > 0) {
+        boolean isOverBudget = totalSpending.compareTo(budgetManager.getOverallMonthlyLimit()) > 0;
+
+        if (isOverBudget) {
             spendingLabel.setTextFill(Color.RED);
-            SliderInfoNotifier.getInstance().pushNotification("Warning: You are over your overall monthly budget!");
+
+            if (!wasOverBudget) {
+                SliderInfoNotifier.getInstance()
+                        .pushNotification("Warning: You are over your overall monthly budget!");
+            }
+
         } else {
             spendingLabel.setTextFill(Color.BLACK);
         }
+
+        wasOverBudget = isOverBudget;
 
         if (isTotalView) {
             breakdownTable.setItems(FXCollections.observableArrayList(budgetManager.getCategories()));
@@ -208,10 +230,21 @@ public class CenterPanel extends VBox {
         dialog.setTitle("Edit Budget");
         dialog.setHeaderText("Enter new overall monthly budget:");
         dialog.setContentText("Amount:");
+
         Optional<String> result = dialog.showAndWait();
+
         result.ifPresent(amount -> {
             try {
-                budgetManager.setOverallMonthlyLimit(new BigDecimal(amount));
+                BigDecimal newBudget = new BigDecimal(amount.trim());
+
+                if (newBudget.compareTo(BigDecimal.ZERO) < 0) {
+                    PopupInfoNotifier.getInstance().pushNotification("Budget cannot be negative.");
+                    return;
+                }
+
+                Command command = new UpdateBudgetCommand(budgetManager, newBudget);
+                command.execute();
+
                 SliderInfoNotifier.getInstance().pushNotification("Overall budget updated");
             } catch (NumberFormatException e) {
                 PopupInfoNotifier.getInstance().pushNotification("Invalid amount entered.");
@@ -251,9 +284,12 @@ public class CenterPanel extends VBox {
 
     private void removeTransaction() {
         Transaction selected = transactionTable.getSelectionModel().getSelectedItem();
+
         if (selected != null && currentCategory != null) {
             if (confirmNotifier.pushPrompt("Remove selected transaction?")) {
-                currentCategory.removeTransaction(selected.getID());
+                Command command = new RemoveTransactionCommand(currentCategory, selected.getID());
+                command.execute();
+
                 SliderInfoNotifier.getInstance().pushNotification("Transaction removed.");
             }
         }

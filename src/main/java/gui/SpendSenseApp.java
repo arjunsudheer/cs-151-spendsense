@@ -50,6 +50,8 @@ public class SpendSenseApp extends Application implements BudgetObserver {
         categoryPanel.setBudgetManager(currentBudgetManager);
         centerPanel.setBudgetManager(currentBudgetManager);
 
+        centerPanel.setViewMode(categoryPanel.isTotalSelected(), null);
+
         updateUI();
     }
 

@@ -2,7 +2,6 @@ package gui;
 
 import javafx.application.Platform;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 
@@ -12,35 +11,87 @@ import java.time.YearMonth;
 import java.util.function.Consumer;
 
 public class TopBar extends ToolBar {
-    private ComboBox<YearMonth> monthSelector;
+
+    private YearMonth selectedMonth;
+
+    private Label monthLabel;
+
     private InfoNotifier infoNotifier;
 
     public TopBar(YearMonth currentMonth, Consumer<YearMonth> onMonthChanged) {
+
         this.infoNotifier = PopupInfoNotifier.getInstance();
 
+        this.selectedMonth = currentMonth;
+
         Button exitBtn = new Button("Exit");
+
         exitBtn.setOnAction(e -> Platform.exit());
 
         Button aboutBtn = new Button("About");
+
         aboutBtn.setOnAction(e -> infoNotifier.pushNotification("SpendSense Budget Planner\nCS 151 SJSU"));
 
-        this.getItems().add(new Label("Select Month:"));
+        Button previousMonthBtn = new Button("<");
 
-        monthSelector = new ComboBox<>();
-        for (int i = -5; i <= 5; i++) {
-            monthSelector.getItems().add(YearMonth.now().plusMonths(i));
-        }
-        monthSelector.setValue(currentMonth);
-        monthSelector.setOnAction(e -> {
+        Button nextMonthBtn = new Button(">");
+
+        monthLabel = new Label(selectedMonth.toString());
+
+        monthLabel.setStyle("-fx-font-weight: bold;");
+
+        previousMonthBtn.setOnAction(e -> {
+
+            selectedMonth = selectedMonth.minusMonths(1);
+
+            monthLabel.setText(selectedMonth.toString());
+
             if (onMonthChanged != null) {
-                onMonthChanged.accept(monthSelector.getValue());
+
+                onMonthChanged.accept(selectedMonth);
+
             }
+
         });
 
-        this.getItems().addAll(monthSelector, new javafx.scene.control.Separator(), aboutBtn, exitBtn);
+        nextMonthBtn.setOnAction(e -> {
+
+            selectedMonth = selectedMonth.plusMonths(1);
+
+            monthLabel.setText(selectedMonth.toString());
+
+            if (onMonthChanged != null) {
+
+                onMonthChanged.accept(selectedMonth);
+
+            }
+
+        });
+
+        this.getItems().addAll(
+
+                new Label("Select Month:"),
+
+                previousMonthBtn,
+
+                monthLabel,
+
+                nextMonthBtn,
+
+                new javafx.scene.control.Separator(),
+
+                aboutBtn,
+
+                exitBtn
+
+        );
+
     }
 
     public YearMonth getSelectedMonth() {
-        return monthSelector.getValue();
+
+        return selectedMonth;
+
     }
+
 }
