@@ -50,14 +50,12 @@ public class CenterPanel extends VBox {
         // Summary Header
         HBox summaryBox = new HBox(20);
         budgetLabel = new Label("Overall Budget: $0.00");
-        Button editBudgetBtn = new Button("Edit Budget");
-        editBudgetBtn.setOnAction(e -> editBudget());
         spendingLabel = new Label("Current Spending: $0.00");
 
         budgetLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
         spendingLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-        summaryBox.getChildren().addAll(budgetLabel, editBudgetBtn, spendingLabel);
+        summaryBox.getChildren().addAll(budgetLabel, spendingLabel);
 
         tableLabel = new Label("Transactions:");
 
