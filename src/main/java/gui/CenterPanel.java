@@ -17,11 +17,13 @@ import notification.info.PopupInfoNotifier;
 import notification.info.SliderInfoNotifier;
 import notification.input.InputNotifier;
 import notification.input.PopupInputNotifier;
+
 import java.math.BigDecimal;
+import java.time.YearMonth;
 import java.util.Optional;
+
 import command.Command;
 import command.RemoveTransactionCommand;
-import command.UpdateBudgetCommand;
 
 public class CenterPanel extends VBox {
     private Label budgetLabel;
@@ -39,6 +41,7 @@ public class CenterPanel extends VBox {
 
     private HBox txBtnBox;
     private Label tableLabel;
+    private VBox mainContent;
 
     public CenterPanel() {
         this.inputNotifier = new PopupInputNotifier();
@@ -47,7 +50,6 @@ public class CenterPanel extends VBox {
         this.setPadding(new Insets(10));
         this.setSpacing(10);
 
-        // Summary Header
         HBox summaryBox = new HBox(20);
         budgetLabel = new Label("Overall Budget: $0.00");
         spendingLabel = new Label("Current Spending: $0.00");
@@ -59,12 +61,10 @@ public class CenterPanel extends VBox {
 
         tableLabel = new Label("Transactions:");
 
-        // Transaction Table
         transactionTable = createTransactionTable();
         transactionTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         VBox.setVgrow(transactionTable, Priority.ALWAYS);
 
-        // Breakdown Table
         breakdownTable = createBreakdownTable();
         breakdownTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         VBox.setVgrow(breakdownTable, Priority.ALWAYS);
@@ -76,11 +76,18 @@ public class CenterPanel extends VBox {
 
         Button addTxBtn = new Button("Add Transaction");
         addTxBtn.setOnAction(e -> addTransaction());
+
         Button rmTxBtn = new Button("Remove Transaction");
         rmTxBtn.setOnAction(e -> removeTransaction());
+
         txBtnBox.getChildren().addAll(addTxBtn, rmTxBtn);
 
-        this.getChildren().addAll(summaryBox, tableLabel, transactionTable, breakdownTable, txBtnBox);
+        mainContent = new VBox();
+        mainContent.setSpacing(10);
+        VBox.setVgrow(mainContent, Priority.ALWAYS);
+        mainContent.getChildren().addAll(tableLabel, transactionTable, breakdownTable, txBtnBox);
+
+        this.getChildren().addAll(summaryBox, mainContent);
     }
 
     private TableView<Transaction> createTransactionTable() {
@@ -88,16 +95,13 @@ public class CenterPanel extends VBox {
 
         TableColumn<Transaction, String> dateCol = new TableColumn<>("Date");
         dateCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSpec().getDate().toString()));
-        dateCol.setPrefWidth(120);
 
         TableColumn<Transaction, String> descCol = new TableColumn<>("Description");
         descCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSpec().getDescription()));
-        descCol.setPrefWidth(250);
 
         TableColumn<Transaction, String> amountCol = new TableColumn<>("Amount");
         amountCol.setCellValueFactory(
                 data -> new SimpleStringProperty(String.format("$%.2f", data.getValue().getSpec().getAmount())));
-        amountCol.setPrefWidth(120);
 
         table.getColumns().addAll(java.util.Arrays.asList(dateCol, descCol, amountCol));
 
@@ -105,17 +109,17 @@ public class CenterPanel extends VBox {
             @Override
             protected void updateItem(Transaction item, boolean empty) {
                 super.updateItem(item, empty);
+
                 if (item == null || empty) {
                     setStyle("");
+                } else if (item.getSpec().isSpending()) {
+                    setStyle("-fx-control-inner-background: #ffcccc;");
                 } else {
-                    if (item.getSpec().isSpending()) {
-                        setStyle("-fx-control-inner-background: #ffcccc;"); // Light Red
-                    } else {
-                        setStyle("-fx-control-inner-background: #ccffcc;"); // Light Green
-                    }
+                    setStyle("-fx-control-inner-background: #ccffcc;");
                 }
             }
         });
+
         return table;
     }
 
@@ -124,19 +128,16 @@ public class CenterPanel extends VBox {
 
         TableColumn<SpendingCategory, String> nameCol = new TableColumn<>("Category");
         nameCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getName()));
-        nameCol.setPrefWidth(150);
 
         TableColumn<SpendingCategory, String> spentCol = new TableColumn<>("Spent");
         spentCol.setCellValueFactory(data -> {
             BigDecimal spent = FinancialMetricsAggregator.calculateSpending(data.getValue().getTransactions());
             return new SimpleStringProperty(String.format("$%.2f", spent));
         });
-        spentCol.setPrefWidth(120);
 
         TableColumn<SpendingCategory, String> limitCol = new TableColumn<>("Limit");
         limitCol.setCellValueFactory(
                 data -> new SimpleStringProperty(String.format("$%.2f", data.getValue().getMonthlySpendingLimit())));
-        limitCol.setPrefWidth(120);
 
         table.getColumns().addAll(java.util.Arrays.asList(nameCol, spentCol, limitCol));
 
@@ -144,12 +145,14 @@ public class CenterPanel extends VBox {
             @Override
             protected void updateItem(SpendingCategory item, boolean empty) {
                 super.updateItem(item, empty);
+
                 if (item == null || empty) {
                     setStyle("");
                 } else {
                     BigDecimal spent = FinancialMetricsAggregator.calculateSpending(item.getTransactions());
+
                     if (spent.compareTo(item.getMonthlySpendingLimit()) > 0) {
-                        setStyle("-fx-control-inner-background: #ffcccc;"); // Over limit
+                        setStyle("-fx-control-inner-background: #ffcccc;");
                     } else {
                         setStyle("");
                     }
@@ -162,6 +165,23 @@ public class CenterPanel extends VBox {
 
     public void setBudgetManager(BudgetManager budgetManager) {
         this.budgetManager = budgetManager;
+    }
+
+    public void showDashboardPage() {
+        mainContent.getChildren().clear();
+        mainContent.getChildren().addAll(tableLabel, transactionTable, breakdownTable, txBtnBox);
+        setViewMode(isTotalView, currentCategory);
+        updateData();
+    }
+
+    public void showBudgetPage() {
+        mainContent.getChildren().clear();
+        mainContent.getChildren().add(new BudgetPage(budgetManager));
+    }
+
+    public void showAnalyticsPage(YearMonth month) {
+        mainContent.getChildren().clear();
+        mainContent.getChildren().add(new AnalyticsPage(budgetManager, month));
     }
 
     public void setViewMode(boolean isTotal, SpendingCategory category) {
@@ -188,8 +208,9 @@ public class CenterPanel extends VBox {
     }
 
     public void updateData() {
-        if (budgetManager == null)
+        if (budgetManager == null) {
             return;
+        }
 
         budgetLabel.setText(String.format("Overall Budget: $%.2f", budgetManager.getOverallMonthlyLimit()));
 
@@ -207,7 +228,6 @@ public class CenterPanel extends VBox {
                 SliderInfoNotifier.getInstance()
                         .pushNotification("Warning: You are over your overall monthly budget!");
             }
-
         } else {
             spendingLabel.setTextFill(Color.BLACK);
         }
@@ -223,33 +243,6 @@ public class CenterPanel extends VBox {
         }
     }
 
-    private void editBudget() {
-        TextInputDialog dialog = new TextInputDialog(budgetManager.getOverallMonthlyLimit().toString());
-        dialog.setTitle("Edit Budget");
-        dialog.setHeaderText("Enter new overall monthly budget:");
-        dialog.setContentText("Amount:");
-
-        Optional<String> result = dialog.showAndWait();
-
-        result.ifPresent(amount -> {
-            try {
-                BigDecimal newBudget = new BigDecimal(amount.trim());
-
-                if (newBudget.compareTo(BigDecimal.ZERO) < 0) {
-                    PopupInfoNotifier.getInstance().pushNotification("Budget cannot be negative.");
-                    return;
-                }
-
-                Command command = new UpdateBudgetCommand(budgetManager, newBudget);
-                command.execute();
-
-                SliderInfoNotifier.getInstance().pushNotification("Overall budget updated");
-            } catch (NumberFormatException e) {
-                PopupInfoNotifier.getInstance().pushNotification("Invalid amount entered.");
-            }
-        });
-    }
-
     private void addTransaction() {
         if (currentCategory == null) {
             PopupInfoNotifier.getInstance().pushNotification("Please select a category first.");
@@ -258,6 +251,7 @@ public class CenterPanel extends VBox {
 
         Optional<Pair<String, String>> result = inputNotifier.pushInputPrompt(
                 "Add Transaction", "Enter Transaction Details", "Amount (e.g., -50 or 100)", "Description");
+
         result.ifPresent(pair -> {
             try {
                 BigDecimal amount = new BigDecimal(pair.getKey().trim());
@@ -265,8 +259,7 @@ public class CenterPanel extends VBox {
 
                 if (amount.compareTo(BigDecimal.ZERO) < 0 &&
                         budgetManager.isOverSpendingCategoryMonthlyLimit(currentCategory.getName(), amount.abs())) {
-                    if (!confirmNotifier
-                            .pushPrompt("Warning: This transaction exceeds your category limit! Add anyway?")) {
+                    if (!confirmNotifier.pushPrompt("Warning: This transaction exceeds your category limit! Add anyway?")) {
                         return;
                     }
                 }
@@ -274,6 +267,7 @@ public class CenterPanel extends VBox {
                 Transaction t = new Transaction(new TransactionSpec(amount, desc));
                 currentCategory.addTransaction(t);
                 SliderInfoNotifier.getInstance().pushNotification("Transaction added: " + desc);
+
             } catch (Exception e) {
                 PopupInfoNotifier.getInstance().pushNotification("Error adding transaction. Check your input.");
             }
