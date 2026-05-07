@@ -26,9 +26,9 @@ public class SpendSenseApp extends Application implements BudgetObserver {
         dataManager = DataManager.getInstance();
         currentMonth = YearMonth.now();
 
+        centerPanel = new CenterPanel();
         topBar = new TopBar(currentMonth, this::onMonthChanged, centerPanel);
         categoryPanel = new CategoryPanel(this::onCategorySelected);
-        centerPanel = new CenterPanel();
 
         loadMonthData(currentMonth);
 
