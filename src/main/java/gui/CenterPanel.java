@@ -184,6 +184,18 @@ public class CenterPanel extends VBox {
         mainContent.getChildren().add(new AnalyticsPage(budgetManager, month));
     }
 
+    public void showSearchPage()
+    {
+        mainContent.getChildren().clear();
+        mainContent.getChildren().add(new SearchPage(budgetManager));
+    }
+
+    public void showAboutPage()
+    {
+        mainContent.getChildren().clear();
+        mainContent.getChildren().add(new AboutPage());
+    }
+
     public void setViewMode(boolean isTotal, SpendingCategory category) {
         this.isTotalView = isTotal;
         this.currentCategory = category;

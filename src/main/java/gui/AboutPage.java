@@ -41,5 +41,20 @@ public class AboutPage extends VBox{
                         "6. Multi-page navigation UI"
         );
         features.setWrapText(true);
+
+        getChildren().addAll(
+                title,
+                subtitle,
+
+                new Separator(),
+
+                descriptionHeader,
+                description,
+
+                new Separator(),
+
+                featuresHeader,
+                features
+        );
     }
 }

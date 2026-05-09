@@ -28,9 +28,13 @@ public class TopBar extends ToolBar {
         Button exitBtn = new Button("Exit");
         exitBtn.setOnAction(e -> Platform.exit());
 
+        // -----------SEARCH FEATURE------------
+        Button searchBtn = new Button("Search");
+        searchBtn.setOnAction(e-> centerPanel.showSearchPage());
+
         Button aboutBtn = new Button("About");
         aboutBtn.setOnAction(e ->
-                infoNotifier.pushNotification("SpendSense Budget Planner\nCS 151 SJSU")
+                centerPanel.showAboutPage()
         );
 
         Button previousMonthBtn = new Button("<");
@@ -76,6 +80,7 @@ public class TopBar extends ToolBar {
                 dashboardBtn,
                 analyticsBtn,
                 budgetBtn,
+                searchBtn,
 
                 new Separator(),
                 aboutBtn,
