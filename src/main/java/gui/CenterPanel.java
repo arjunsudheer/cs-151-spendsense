@@ -184,14 +184,12 @@ public class CenterPanel extends VBox {
         mainContent.getChildren().add(new AnalyticsPage(budgetManager, month));
     }
 
-    public void showSearchPage()
-    {
+    public void showSearchPage() {
         mainContent.getChildren().clear();
         mainContent.getChildren().add(new SearchPage(budgetManager));
     }
 
-    public void showAboutPage()
-    {
+    public void showAboutPage() {
         mainContent.getChildren().clear();
         mainContent.getChildren().add(new AboutPage());
     }
@@ -271,7 +269,8 @@ public class CenterPanel extends VBox {
 
                 if (amount.compareTo(BigDecimal.ZERO) < 0 &&
                         budgetManager.isOverSpendingCategoryMonthlyLimit(currentCategory.getName(), amount.abs())) {
-                    if (!confirmNotifier.pushPrompt("Warning: This transaction exceeds your category limit! Add anyway?")) {
+                    if (!confirmNotifier
+                            .pushPrompt("Warning: This transaction exceeds your category limit! Add anyway?")) {
                         return;
                     }
                 }

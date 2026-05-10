@@ -19,8 +19,7 @@ public class PopupInputNotifier implements InputNotifier {
             String title,
             String header,
             String field1Name,
-            String field2Name
-    ) {
+            String field2Name) {
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle(title);
         dialog.setHeaderText(header);
@@ -47,13 +46,11 @@ public class PopupInputNotifier implements InputNotifier {
         Node submitButton = dialog.getDialogPane().lookupButton(submitButtonType);
         submitButton.setDisable(true);
 
-        field1.textProperty().addListener((obs, oldValue, newValue) ->
-                submitButton.setDisable(newValue.trim().isEmpty() || field2.getText().trim().isEmpty())
-        );
+        field1.textProperty().addListener((obs, oldValue, newValue) -> submitButton
+                .setDisable(newValue.trim().isEmpty() || field2.getText().trim().isEmpty()));
 
-        field2.textProperty().addListener((obs, oldValue, newValue) ->
-                submitButton.setDisable(newValue.trim().isEmpty() || field1.getText().trim().isEmpty())
-        );
+        field2.textProperty().addListener((obs, oldValue, newValue) -> submitButton
+                .setDisable(newValue.trim().isEmpty() || field1.getText().trim().isEmpty()));
 
         dialog.getDialogPane().setContent(grid);
         Platform.runLater(field1::requestFocus);

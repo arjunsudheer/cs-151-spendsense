@@ -45,8 +45,7 @@ public class SliderConfirmNotifier implements ConfirmNotifier {
                         "-fx-padding: 15px;" +
                         "-fx-background-radius: 8px;" +
                         "-fx-border-color: #666666;" +
-                        "-fx-border-radius: 8px;"
-        );
+                        "-fx-border-radius: 8px;");
 
         Scene scene = new Scene(root);
         scene.setFill(null);
@@ -76,9 +75,7 @@ public class SliderConfirmNotifier implements ConfirmNotifier {
         Timeline slideIn = new Timeline(
                 new KeyFrame(
                         Duration.millis(300),
-                        new KeyValue(yWrapper, screenBottom - 150)
-                )
-        );
+                        new KeyValue(yWrapper, screenBottom - 150)));
 
         slideIn.play();
 
@@ -95,9 +92,7 @@ public class SliderConfirmNotifier implements ConfirmNotifier {
         Timeline slideOut = new Timeline(
                 new KeyFrame(
                         Duration.millis(300),
-                        new KeyValue(yWrapper, screenBottom + 50)
-                )
-        );
+                        new KeyValue(yWrapper, screenBottom + 50)));
 
         slideOut.setOnFinished(e -> stage.close());
         slideOut.play();

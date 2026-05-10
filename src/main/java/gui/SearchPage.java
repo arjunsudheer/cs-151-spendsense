@@ -1,6 +1,6 @@
 package gui;
+
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchPage extends VBox{
+public class SearchPage extends VBox {
     private BudgetManager budgetManager;
 
     private TextField nameField;
@@ -19,8 +19,7 @@ public class SearchPage extends VBox{
 
     private TableView<Transaction> table;
 
-    public SearchPage(BudgetManager budgetManager)
-    {
+    public SearchPage(BudgetManager budgetManager) {
         this.budgetManager = budgetManager;
 
         setSpacing(10);
@@ -46,15 +45,11 @@ public class SearchPage extends VBox{
 
         TableColumn<Transaction, String> descCol = new TableColumn<>("Description");
         descCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(
-                d.getValue().getSpec().getAmount().toString()
-            )
-        );
+                d.getValue().getSpec().getAmount().toString()));
 
         TableColumn<Transaction, String> amountCol = new TableColumn<>("Amount");
         amountCol.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(
-                d.getValue().getSpec().getAmount().toString()
-                )
-        );
+                d.getValue().getSpec().getAmount().toString()));
 
         table.getColumns().addAll(descCol, amountCol);
         button.setOnAction(e -> performSearch());
@@ -66,12 +61,10 @@ public class SearchPage extends VBox{
                 amountField,
                 filterType,
                 button,
-                table
-        );
+                table);
     }
 
-    private void performSearch()
-    {
+    private void performSearch() {
         String name = nameField.getText().toLowerCase();
         String category = categoryField.getText().toLowerCase();
         String amountText = amountField.getText();
@@ -80,8 +73,7 @@ public class SearchPage extends VBox{
         BigDecimal amount = null;
 
         try {
-            if(!amountText.isEmpty())
-            {
+            if (!amountText.isEmpty()) {
                 amount = new BigDecimal(amountText);
             }
         } catch (Exception e) {
@@ -91,39 +83,34 @@ public class SearchPage extends VBox{
         List<Transaction> all = budgetManager.collectAllTransactions();
         List<Transaction> results = new ArrayList<>();
 
-        for(Transaction t: all)
-        {
+        for (Transaction t : all) {
             TransactionSpec spec = t.getSpec();
             boolean matches = true;
 
             // name filter
-            if(!name.isEmpty())
-            {
-                if(!spec.getDescription().toLowerCase().contains(name))
-                {
+            if (!name.isEmpty()) {
+                if (!spec.getDescription().toLowerCase().contains(name)) {
                     matches = false;
                 }
             }
             // category filter
-            if(!category.isEmpty())
-            {
+            if (!category.isEmpty()) {
                 SpendingCategory aCategory = budgetManager.getSpendingCategory(category);
 
-                if(aCategory == null || !aCategory.getTransactions().contains(t))
-                {
+                if (aCategory == null || !aCategory.getTransactions().contains(t)) {
                     matches = false;
                 }
             }
             // amount filter
-            if(amount != null && type != null)
-            {
+            if (amount != null && type != null) {
                 int cmp = spec.getAmount().compareTo(amount);
 
-                if(type.equals("Greater Than") && cmp <= 0) matches = false;
-                if(type.equals("Less Than") && cmp >= 0) matches = false;
+                if (type.equals("Greater Than") && cmp <= 0)
+                    matches = false;
+                if (type.equals("Less Than") && cmp >= 0)
+                    matches = false;
             }
-            if(matches)
-            {
+            if (matches) {
                 results.add(t);
             }
         }

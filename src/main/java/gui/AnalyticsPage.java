@@ -24,8 +24,7 @@ public class AnalyticsPage extends VBox {
         series.setName("Spending");
 
         BigDecimal totalSpending = FinancialMetricsAggregator.calculateSpending(
-                budgetManager.collectAllTransactions()
-        );
+                budgetManager.collectAllTransactions());
 
         series.getData().add(new XYChart.Data<>(month.toString(), totalSpending.doubleValue()));
         lineChart.getData().add(series);
@@ -35,13 +34,11 @@ public class AnalyticsPage extends VBox {
 
         for (SpendingCategory category : budgetManager.getCategories()) {
             BigDecimal categorySpending = FinancialMetricsAggregator.calculateSpending(
-                    category.getTransactions()
-            );
+                    category.getTransactions());
 
             if (categorySpending.compareTo(BigDecimal.ZERO) > 0) {
                 pieChart.getData().add(
-                        new PieChart.Data(category.getName(), categorySpending.doubleValue())
-                );
+                        new PieChart.Data(category.getName(), categorySpending.doubleValue()));
             }
         }
 

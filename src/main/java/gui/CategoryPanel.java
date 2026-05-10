@@ -127,8 +127,7 @@ public class CategoryPanel extends VBox {
 
                 if (budgetManager.wouldExceedOverallBudgetWithCategoryLimit(categoryLimit)) {
                     boolean continueAnyway = confirmNotifier.pushPrompt(
-                            "This category limit makes total category limits exceed your overall budget. Continue anyway?"
-                    );
+                            "This category limit makes total category limits exceed your overall budget. Continue anyway?");
 
                     if (!continueAnyway) {
                         return;

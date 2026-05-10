@@ -6,9 +6,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
 
-import notification.info.InfoNotifier;
-import notification.info.PopupInfoNotifier;
-
 import java.time.YearMonth;
 import java.util.function.Consumer;
 
@@ -16,26 +13,22 @@ public class TopBar extends ToolBar {
 
     private YearMonth selectedMonth;
     private Label monthLabel;
-    private InfoNotifier infoNotifier;
 
     public TopBar(YearMonth currentMonth,
-                  Consumer<YearMonth> onMonthChanged,
-                  CenterPanel centerPanel) {
+            Consumer<YearMonth> onMonthChanged,
+            CenterPanel centerPanel) {
 
-        this.infoNotifier = PopupInfoNotifier.getInstance();
         this.selectedMonth = currentMonth;
 
         Button exitBtn = new Button("Exit");
         exitBtn.setOnAction(e -> Platform.exit());
 
-        // -----------SEARCH FEATURE------------
+        // Search Feature
         Button searchBtn = new Button("Search");
-        searchBtn.setOnAction(e-> centerPanel.showSearchPage());
+        searchBtn.setOnAction(e -> centerPanel.showSearchPage());
 
         Button aboutBtn = new Button("About");
-        aboutBtn.setOnAction(e ->
-                centerPanel.showAboutPage()
-        );
+        aboutBtn.setOnAction(e -> centerPanel.showAboutPage());
 
         Button previousMonthBtn = new Button("<");
         Button nextMonthBtn = new Button(">");
@@ -61,7 +54,7 @@ public class TopBar extends ToolBar {
             }
         });
 
-        // 🔥 NEW NAVIGATION BUTTONS
+        // Navigation Buttons
         Button dashboardBtn = new Button("Dashboard");
         Button analyticsBtn = new Button("Analytics");
         Button budgetBtn = new Button("Budget");
@@ -84,8 +77,7 @@ public class TopBar extends ToolBar {
 
                 new Separator(),
                 aboutBtn,
-                exitBtn
-        );
+                exitBtn);
     }
 
     public YearMonth getSelectedMonth() {

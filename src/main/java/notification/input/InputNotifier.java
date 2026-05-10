@@ -8,6 +8,5 @@ public interface InputNotifier {
             String title,
             String header,
             String field1Name,
-            String field2Name
-    );
+            String field2Name);
 }
