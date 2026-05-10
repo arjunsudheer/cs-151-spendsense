@@ -2,6 +2,7 @@ package model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -40,7 +41,7 @@ public class TransactionSpec {
     }
 
     public Map<String, String> getProperties() {
-        return properties;
+        return Collections.unmodifiableMap(properties);
     }
 
     public String get(String key) {

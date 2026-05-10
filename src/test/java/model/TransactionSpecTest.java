@@ -22,7 +22,7 @@ public class TransactionSpecTest {
 
     @Test
     void testGetAmount() {
-        TransactionSpec spec = new TransactionSpec(new BigDecimal("99,99"), "Shoes");
+        TransactionSpec spec = new TransactionSpec(new BigDecimal("99.99"), "Shoes");
         assertEquals(new BigDecimal("99.99"), spec.getAmount());
     }
 
@@ -58,13 +58,13 @@ public class TransactionSpecTest {
     @Test
     void testIsSpendingReturnsTrueForNegative() {
         TransactionSpec spec = new TransactionSpec(new BigDecimal("-50.00"), "Rent");
-        assertFalse(spec.isSpending());
+        assertTrue(spec.isSpending());
     }
 
     @Test
     void testIsSpendingRulesFalsePositive() {
         TransactionSpec spec = new TransactionSpec(new BigDecimal("50.00"), "Paycheck");
-        assertTrue(spec.isSpending());
+        assertFalse(spec.isSpending());
     }
 
     @Test
