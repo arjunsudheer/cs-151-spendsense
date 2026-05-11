@@ -5,6 +5,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 
+// This class represents the About page in the application
+// It displays general information about the app and its features
 public class AboutPage extends VBox {
         public AboutPage() {
                 setSpacing(12);
@@ -40,6 +42,7 @@ public class AboutPage extends VBox {
                                                 "6. Multi-page navigation UI");
                 features.setWrapText(true);
 
+                // Add all UI components to the page layout
                 getChildren().addAll(
                                 title,
                                 subtitle,
