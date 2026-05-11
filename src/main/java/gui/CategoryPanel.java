@@ -57,7 +57,7 @@ public class CategoryPanel extends VBox {
                     setText(null);
                 } else {
                     if (item == totalCategoryMock) {
-                        setText("⭐ Total Dashboard");
+                        setText("Total Dashboard");
                         setStyle("-fx-font-weight: bold;");
                     } else {
                         setText(item.getName() + " (Limit: $" + item.getMonthlySpendingLimit() + ")");
