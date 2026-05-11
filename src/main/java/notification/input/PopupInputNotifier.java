@@ -12,8 +12,10 @@ import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
 import java.util.Optional;
 
+// Popup dialog used for collecting user input
 public class PopupInputNotifier implements InputNotifier {
 
+    // Display input dialog with two text fields
     @Override
     public Optional<Pair<String, String>> pushInputPrompt(
             String title,
@@ -24,6 +26,7 @@ public class PopupInputNotifier implements InputNotifier {
         dialog.setTitle(title);
         dialog.setHeaderText(header);
 
+        // Add submit and cancel buttons
         ButtonType submitButtonType = new ButtonType("Submit", ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(submitButtonType, ButtonType.CANCEL);
 
@@ -33,6 +36,7 @@ public class PopupInputNotifier implements InputNotifier {
         TextField field2 = new TextField();
         field2.setPromptText(field2Name);
 
+        // Layout for input fields and labels
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -43,6 +47,7 @@ public class PopupInputNotifier implements InputNotifier {
         grid.add(new Label(field2Name + ":"), 0, 1);
         grid.add(field2, 1, 1);
 
+        // Disable submit button until both fields are filled
         Node submitButton = dialog.getDialogPane().lookupButton(submitButtonType);
         submitButton.setDisable(true);
 
@@ -55,6 +60,7 @@ public class PopupInputNotifier implements InputNotifier {
         dialog.getDialogPane().setContent(grid);
         Platform.runLater(field1::requestFocus);
 
+        // Return user input after submit
         dialog.setResultConverter(button -> {
             if (button == submitButtonType) {
                 return new Pair<>(field1.getText().trim(), field2.getText().trim());

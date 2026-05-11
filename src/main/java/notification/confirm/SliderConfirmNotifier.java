@@ -16,9 +16,11 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
+// Sliding confirmation notification with custom animation
 public class SliderConfirmNotifier implements ConfirmNotifier {
     private boolean result;
 
+    // Display animated confirmation notification
     @Override
     public boolean pushPrompt(String message) {
         result = false;
@@ -38,6 +40,7 @@ public class SliderConfirmNotifier implements ConfirmNotifier {
         HBox btnBox = new HBox(10, yesBtn, noBtn);
         btnBox.setAlignment(Pos.CENTER);
 
+        // Main notification layout
         VBox root = new VBox(10, label, btnBox);
         root.setAlignment(Pos.CENTER);
         root.setStyle(
@@ -72,6 +75,7 @@ public class SliderConfirmNotifier implements ConfirmNotifier {
         DoubleProperty yWrapper = new SimpleDoubleProperty(stage.getY());
         yWrapper.addListener((obs, oldV, newV) -> stage.setY(newV.doubleValue()));
 
+        // Slide notification into view
         Timeline slideIn = new Timeline(
                 new KeyFrame(
                         Duration.millis(300),
@@ -83,6 +87,7 @@ public class SliderConfirmNotifier implements ConfirmNotifier {
         return result;
     }
 
+    // Animate notification closing
     private void closeStage(Stage stage) {
         double screenBottom = Screen.getPrimary().getVisualBounds().getMaxY();
 

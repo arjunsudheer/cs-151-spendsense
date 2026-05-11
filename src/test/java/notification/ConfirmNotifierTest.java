@@ -18,6 +18,7 @@ public class ConfirmNotifierTest {
         assertNotNull(slider);
     }
 
+    // Test notifier polymorphism through the interface
     @Test
     public void testConfirmNotifierPolymorphism() {
         ConfirmNotifier popup = new PopupConfirmNotifier();

@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 public class TransactionTest {
     private TransactionSpec spec;
 
+    // Create sample TransactionSpec before each test
     @BeforeEach
     void setUp() {
         spec = new TransactionSpec(new BigDecimal("50.00"), "Grocery Store");
@@ -21,6 +22,7 @@ public class TransactionTest {
         assertEquals(spec.getDescription(), t.getSpec().getDescription());
     }
 
+    // Make sure each transaction gets a unique ID
     @Test
     void testIDsAreUnique() {
         Transaction t1 = new Transaction(spec);

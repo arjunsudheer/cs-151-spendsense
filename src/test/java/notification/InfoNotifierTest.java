@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class InfoNotifierTest {
 
+    // Test singleton behavior for popup notifications
     @Test
     public void testPopupInfoNotifierSingleton() {
         PopupInfoNotifier instance1 = PopupInfoNotifier.getInstance();

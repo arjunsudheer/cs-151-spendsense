@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FinancialMetricsAggregatorTest {
     private List<Transaction> transactions;
 
+    // Create sample transactions for financial calculations
     @BeforeEach
     public void setUp() {
         transactions = new ArrayList<>();
@@ -26,6 +27,7 @@ public class FinancialMetricsAggregatorTest {
         assertEquals(new BigDecimal("1200.00"), deposits);
     }
 
+    // Verify spending calculations
     @Test
     public void testCalculateSpending() {
         BigDecimal spending = FinancialMetricsAggregator.calculateSpending(transactions);

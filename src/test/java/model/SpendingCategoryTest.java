@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SpendingCategoryTest {
     private SpendingCategory category;
 
+    // Create sample spending category for tests
     @BeforeEach
     public void setUp() {
         category = new SpendingCategory.Builder()
@@ -48,6 +49,7 @@ public class SpendingCategoryTest {
         assertEquals(0, category.getTransactions().size());
     }
 
+    // Test filtering transactions by amount range
     @Test
     public void testFilterByAmount() {
         category.addTransaction(new Transaction(new TransactionSpec(new BigDecimal("-10.00"), "Snacks")));

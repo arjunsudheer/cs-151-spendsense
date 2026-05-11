@@ -9,8 +9,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BudgetManagerTest {
     private BudgetManager budgetManager;
 
+    // Set up fresh BudgetManager before each test
     @BeforeEach
     public void setUp() {
+
         budgetManager = new BudgetManager(new BigDecimal("1000.00"));
     }
 
@@ -25,6 +27,7 @@ public class BudgetManagerTest {
         assertEquals(new BigDecimal("1200.00"), budgetManager.getOverallMonthlyLimit());
     }
 
+    // Test adding and retrieving categories
     @Test
     public void testAddAndGetSpendingCategory() {
         budgetManager.addSpendingCategory("Food", new BigDecimal("300.00"));
@@ -41,6 +44,7 @@ public class BudgetManagerTest {
         assertNull(budgetManager.getSpendingCategory("Food"));
     }
 
+    // Verify category spending limit calculations
     @Test
     public void testIsOverSpendingCategoryMonthlyLimit() {
         budgetManager.addSpendingCategory("Food", new BigDecimal("100.00"));

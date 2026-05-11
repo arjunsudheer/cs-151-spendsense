@@ -14,6 +14,7 @@ public class InputNotifierTest {
         assertNotNull(inputNotifier);
     }
 
+    // Verify interface-based input notifier usage
     @Test
     public void testInputNotifierPolymorphism() {
         InputNotifier inputNotifier = new PopupInputNotifier();

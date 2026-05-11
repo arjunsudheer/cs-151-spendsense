@@ -47,6 +47,7 @@ public class TransactionSpecTest {
         assertEquals("food", spec.get("category"));
     }
 
+    // Make sure transaction properties cannot be modified externally
     @Test
     void testPropertiesAreImmutable() {
         Map<String, String> props = new HashMap<>();
@@ -55,6 +56,7 @@ public class TransactionSpecTest {
         assertThrows(UnsupportedOperationException.class, () -> spec.getProperties().put("new", "value"));
     }
 
+    // Verify negative amounts are treated as spending
     @Test
     void testIsSpendingReturnsTrueForNegative() {
         TransactionSpec spec = new TransactionSpec(new BigDecimal("-50.00"), "Rent");
