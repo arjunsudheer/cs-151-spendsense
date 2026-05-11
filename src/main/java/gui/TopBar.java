@@ -9,6 +9,8 @@ import javafx.scene.control.ToolBar;
 import java.time.YearMonth;
 import java.util.function.Consumer;
 
+// This class represents the top navigation bar of the application
+// It includes month navigation and page switching buttons
 public class TopBar extends ToolBar {
 
     private YearMonth selectedMonth;
@@ -20,6 +22,7 @@ public class TopBar extends ToolBar {
 
         this.selectedMonth = currentMonth;
 
+        // Exit button to close the application
         Button exitBtn = new Button("Exit");
         exitBtn.setOnAction(e -> Platform.exit());
 
@@ -27,15 +30,19 @@ public class TopBar extends ToolBar {
         Button searchBtn = new Button("Search");
         searchBtn.setOnAction(e -> dashboardPage.showSearchPage());
 
+        // Button to open the about page
         Button aboutBtn = new Button("About");
         aboutBtn.setOnAction(e -> dashboardPage.showAboutPage());
 
+        // Buttons to navigate between months
         Button previousMonthBtn = new Button("<");
         Button nextMonthBtn = new Button(">");
 
+        // Displays the currently selected month
         monthLabel = new Label(selectedMonth.toString());
         monthLabel.setStyle("-fx-font-weight: bold;");
 
+        // Go to previous month
         previousMonthBtn.setOnAction(e -> {
             selectedMonth = selectedMonth.minusMonths(1);
             monthLabel.setText(selectedMonth.toString());
@@ -63,6 +70,7 @@ public class TopBar extends ToolBar {
         analyticsBtn.setOnAction(e -> dashboardPage.showAnalyticsPage(selectedMonth));
         budgetBtn.setOnAction(e -> dashboardPage.showBudgetPage());
 
+        // Add all UI elements to the toolbar
         this.getItems().addAll(
                 new Label("Select Month:"),
                 previousMonthBtn,
