@@ -58,6 +58,7 @@ public class SpendingCategory {
     }
 
     private void notifyObservers() {
+        // Broadcast changes to all observers to trigger UI updates
         for (BudgetObserver observer : observers) {
             observer.onBudgetChanged();
         }
@@ -100,6 +101,7 @@ public class SpendingCategory {
         if (transaction == null) {
             return false;
         }
+        // Add transaction and update observers if successful
         boolean added = transactions.add(transaction);
         if (added) {
             notifyObservers();
@@ -108,6 +110,7 @@ public class SpendingCategory {
     }
 
     public Transaction removeTransaction(int id) {
+        // Find transaction by ID, remove it, and notify observers
         for (int i = 0; i < transactions.size(); i++) {
             if (transactions.get(i).getID() == id) {
                 Transaction removed = transactions.remove(i);

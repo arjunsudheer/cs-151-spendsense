@@ -14,6 +14,7 @@ public class DataManager {
     }
 
     public static DataManager getInstance() {
+        // Lazy initialization for Singleton pattern
         if (instance == null) {
             instance = new DataManager();
         }

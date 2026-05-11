@@ -25,7 +25,7 @@ import java.util.Optional;
 import command.Command;
 import command.RemoveTransactionCommand;
 
-public class CenterPanel extends VBox {
+public class DashboardPage extends VBox {
     private Label budgetLabel;
     private Label spendingLabel;
     private TableView<Transaction> transactionTable;
@@ -46,7 +46,7 @@ public class CenterPanel extends VBox {
     private String currentPage = "dashboard";
     private YearMonth currentAnalyticsMonth;
 
-    public CenterPanel() {
+    public DashboardPage() {
         this.inputNotifier = new PopupInputNotifier();
         this.confirmNotifier = new PopupConfirmNotifier();
 
@@ -167,6 +167,7 @@ public class CenterPanel extends VBox {
     }
 
     public void setBudgetManager(BudgetManager budgetManager) {
+        // Set the current budget manager to load data from
         this.budgetManager = budgetManager;
     }
 
@@ -204,6 +205,7 @@ public class CenterPanel extends VBox {
     }
 
     public void refreshCurrentPage(YearMonth month) {
+        // Re-renders the current page depending on state
         switch (currentPage) {
             case "analytics":
                 showAnalyticsPage(month);
@@ -224,6 +226,7 @@ public class CenterPanel extends VBox {
     }
 
     public void setViewMode(boolean isTotal, SpendingCategory category) {
+        // Switch between total category breakdown and specific transaction list view
         this.isTotalView = isTotal;
         this.currentCategory = category;
 
@@ -251,6 +254,7 @@ public class CenterPanel extends VBox {
             return;
         }
 
+        // Update overall budget metrics
         budgetLabel.setText(String.format("Overall Budget: $%.2f", budgetManager.getOverallMonthlyLimit()));
 
         BigDecimal totalSpending = FinancialMetricsAggregator.calculateSpending(
@@ -258,6 +262,7 @@ public class CenterPanel extends VBox {
 
         spendingLabel.setText(String.format("Current Spending: $%.2f", totalSpending));
 
+        // Check if overall spending exceeds limit to prompt user
         boolean isOverBudget = totalSpending.compareTo(budgetManager.getOverallMonthlyLimit()) > 0;
 
         if (isOverBudget) {
@@ -273,6 +278,7 @@ public class CenterPanel extends VBox {
 
         wasOverBudget = isOverBudget;
 
+        // Repopulate active tables
         if (isTotalView) {
             breakdownTable.setItems(FXCollections.observableArrayList(budgetManager.getCategories()));
         } else if (currentCategory != null) {

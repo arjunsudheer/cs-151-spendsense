@@ -49,6 +49,7 @@ public class TransactionSpec {
     }
 
     public boolean isSpending() {
+        // Negative amount represents spending, positive represents deposit
         return amount.compareTo(BigDecimal.ZERO) < 0;
     }
 

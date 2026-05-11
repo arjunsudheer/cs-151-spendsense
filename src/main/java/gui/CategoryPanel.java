@@ -84,6 +84,7 @@ public class CategoryPanel extends VBox {
     }
 
     public void setBudgetManager(BudgetManager budgetManager) {
+        // Assign the current budget manager and refresh the UI list
         this.budgetManager = budgetManager;
         updateList();
     }
@@ -92,6 +93,7 @@ public class CategoryPanel extends VBox {
         if (budgetManager == null)
             return;
 
+        // Save selection state before repopulating
         SpendingCategory selected = categoryListView.getSelectionModel().getSelectedItem();
         String selectedName = selected != null ? selected.getName() : null;
 
@@ -101,6 +103,7 @@ public class CategoryPanel extends VBox {
 
         categoryListView.setItems(categories);
 
+        // Restore previous selection if still available
         if (selectedName != null) {
             for (SpendingCategory cat : categories) {
                 if (cat.getName().equals(selectedName)) {
@@ -160,6 +163,7 @@ public class CategoryPanel extends VBox {
     }
 
     public boolean isTotalSelected() {
+        // Checks whether the "Total Dashboard" mock category is selected
         return categoryListView.getSelectionModel().getSelectedItem() == totalCategoryMock;
     }
 }

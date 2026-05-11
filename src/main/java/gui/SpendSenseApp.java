@@ -19,23 +19,25 @@ public class SpendSenseApp extends Application implements BudgetObserver {
 
     private TopBar topBar;
     private CategoryPanel categoryPanel;
-    private CenterPanel centerPanel;
+    private DashboardPage dashboardPage;
 
     @Override
     public void start(Stage stage) {
+        // Initialize manager and current view state
         dataManager = DataManager.getInstance();
         currentMonth = YearMonth.now();
 
-        centerPanel = new CenterPanel();
-        topBar = new TopBar(currentMonth, this::onMonthChanged, centerPanel);
+        dashboardPage = new DashboardPage();
+        topBar = new TopBar(currentMonth, this::onMonthChanged, dashboardPage);
         categoryPanel = new CategoryPanel(this::onCategorySelected);
 
         loadMonthData(currentMonth);
 
+        // Assemble main layout
         BorderPane root = new BorderPane();
         root.setTop(topBar);
         root.setLeft(categoryPanel);
-        root.setCenter(centerPanel);
+        root.setCenter(dashboardPage);
 
         Scene scene = new Scene(root, 900, 600);
         stage.setTitle("SpendSense Budget Planner");
@@ -44,13 +46,14 @@ public class SpendSenseApp extends Application implements BudgetObserver {
     }
 
     private void loadMonthData(YearMonth month) {
+        // Attach observer to the newly loaded month's budget
         currentBudgetManager = dataManager.getBudgetForMonth(month);
         currentBudgetManager.addObserver(this);
 
         categoryPanel.setBudgetManager(currentBudgetManager);
-        centerPanel.setBudgetManager(currentBudgetManager);
+        dashboardPage.setBudgetManager(currentBudgetManager);
 
-        centerPanel.setViewMode(categoryPanel.isTotalSelected(), null);
+        dashboardPage.setViewMode(categoryPanel.isTotalSelected(), null);
 
         updateUI();
     }
@@ -58,21 +61,22 @@ public class SpendSenseApp extends Application implements BudgetObserver {
     private void onMonthChanged(YearMonth newMonth) {
         currentMonth = newMonth;
         loadMonthData(currentMonth);
-        centerPanel.refreshCurrentPage(currentMonth);
+        dashboardPage.refreshCurrentPage(currentMonth);
     }
 
     private void onCategorySelected(SpendingCategory category) {
-        centerPanel.setViewMode(categoryPanel.isTotalSelected(), category);
-        centerPanel.updateData();
+        dashboardPage.setViewMode(categoryPanel.isTotalSelected(), category);
+        dashboardPage.updateData();
     }
 
     @Override
     public void onBudgetChanged() {
+        // Ensure UI updates occur on the main JavaFX application thread
         Platform.runLater(this::updateUI);
     }
 
     private void updateUI() {
         categoryPanel.updateList();
-        centerPanel.updateData();
+        dashboardPage.updateData();
     }
 }

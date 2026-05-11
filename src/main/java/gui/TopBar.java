@@ -16,7 +16,7 @@ public class TopBar extends ToolBar {
 
     public TopBar(YearMonth currentMonth,
             Consumer<YearMonth> onMonthChanged,
-            CenterPanel centerPanel) {
+            DashboardPage dashboardPage) {
 
         this.selectedMonth = currentMonth;
 
@@ -25,10 +25,10 @@ public class TopBar extends ToolBar {
 
         // Search Feature
         Button searchBtn = new Button("Search");
-        searchBtn.setOnAction(e -> centerPanel.showSearchPage());
+        searchBtn.setOnAction(e -> dashboardPage.showSearchPage());
 
         Button aboutBtn = new Button("About");
-        aboutBtn.setOnAction(e -> centerPanel.showAboutPage());
+        aboutBtn.setOnAction(e -> dashboardPage.showAboutPage());
 
         Button previousMonthBtn = new Button("<");
         Button nextMonthBtn = new Button(">");
@@ -59,9 +59,9 @@ public class TopBar extends ToolBar {
         Button analyticsBtn = new Button("Analytics");
         Button budgetBtn = new Button("Budget");
 
-        dashboardBtn.setOnAction(e -> centerPanel.showDashboardPage());
-        analyticsBtn.setOnAction(e -> centerPanel.showAnalyticsPage(selectedMonth));
-        budgetBtn.setOnAction(e -> centerPanel.showBudgetPage());
+        dashboardBtn.setOnAction(e -> dashboardPage.showDashboardPage());
+        analyticsBtn.setOnAction(e -> dashboardPage.showAnalyticsPage(selectedMonth));
+        budgetBtn.setOnAction(e -> dashboardPage.showBudgetPage());
 
         this.getItems().addAll(
                 new Label("Select Month:"),

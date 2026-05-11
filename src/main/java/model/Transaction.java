@@ -15,6 +15,7 @@ public class Transaction {
     }
 
     public TransactionSpec getSpec() {
+        // Return a defensive copy of the specification
         return new TransactionSpec(
                 spec.getAmount(),
                 spec.getDate(),
@@ -23,6 +24,7 @@ public class Transaction {
     }
 
     private int generateValidID() {
+        // Generate sequentially unique IDs for each transaction
         return counter++;
     }
 

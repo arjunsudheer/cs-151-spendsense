@@ -20,11 +20,13 @@ public class BudgetManager implements BudgetObserver {
     }
 
     public void addObserver(BudgetObserver observer) {
+        // Register an observer to receive budget updates
         this.observers.add(observer);
     }
 
     @Override
     public void onBudgetChanged() {
+        // Notify all registered observers of budget changes
         for (BudgetObserver observer : observers) {
             observer.onBudgetChanged();
         }
@@ -35,6 +37,7 @@ public class BudgetManager implements BudgetObserver {
     }
 
     public void setOverallMonthlyLimit(BigDecimal overallMonthlyBudget) {
+        // Update the monthly limit and trigger a UI refresh
         this.overallMonthlyBudget = overallMonthlyBudget;
         onBudgetChanged();
     }
@@ -44,6 +47,7 @@ public class BudgetManager implements BudgetObserver {
     }
 
     public void addSpendingCategory(SpendingCategory category) {
+        // Add category, register it for observation, and notify changes
         spendingCategories.put(category.getName(), category);
         category.addObserver(this);
         onBudgetChanged();
@@ -58,6 +62,7 @@ public class BudgetManager implements BudgetObserver {
     }
 
     public void removeSpendingCategory(String categoryName) {
+        // Remove category from tracking and update UI
         spendingCategories.remove(categoryName);
         onBudgetChanged();
     }
@@ -67,6 +72,7 @@ public class BudgetManager implements BudgetObserver {
             return false;
         }
         SpendingCategory category = spendingCategories.get(categoryName);
+        // Check if current spending plus new amount exceeds the category's monthly limit
         BigDecimal currentSpending = FinancialMetricsAggregator.calculateSpending(category.getTransactions());
         return currentSpending.add(amount).compareTo(category.getMonthlySpendingLimit()) > 0;
     }
@@ -77,6 +83,7 @@ public class BudgetManager implements BudgetObserver {
     }
 
     public List<Transaction> collectAllTransactions() {
+        // Aggregate transactions from all spending categories
         List<Transaction> allTransactions = new ArrayList<>();
         for (SpendingCategory category : spendingCategories.values()) {
             allTransactions.addAll(category.getTransactions());
@@ -95,6 +102,7 @@ public class BudgetManager implements BudgetObserver {
     }
 
     public boolean wouldExceedOverallBudgetWithCategoryLimit(BigDecimal newLimit) {
+        // Ensure adding a new category limit doesn't push total limits over the overall budget
         return getTotalCategoryLimits()
                 .add(newLimit)
                 .compareTo(overallMonthlyBudget) > 0;
