@@ -43,6 +43,9 @@ public class CenterPanel extends VBox {
     private Label tableLabel;
     private VBox mainContent;
 
+    private String currentPage = "dashboard";
+    private YearMonth currentAnalyticsMonth;
+
     public CenterPanel() {
         this.inputNotifier = new PopupInputNotifier();
         this.confirmNotifier = new PopupConfirmNotifier();
@@ -168,6 +171,7 @@ public class CenterPanel extends VBox {
     }
 
     public void showDashboardPage() {
+        currentPage = "dashboard";
         mainContent.getChildren().clear();
         mainContent.getChildren().addAll(tableLabel, transactionTable, breakdownTable, txBtnBox);
         setViewMode(isTotalView, currentCategory);
@@ -175,23 +179,48 @@ public class CenterPanel extends VBox {
     }
 
     public void showBudgetPage() {
+        currentPage = "budget";
         mainContent.getChildren().clear();
         mainContent.getChildren().add(new BudgetPage(budgetManager));
     }
 
     public void showAnalyticsPage(YearMonth month) {
+        currentPage = "analytics";
+        currentAnalyticsMonth = month;
         mainContent.getChildren().clear();
         mainContent.getChildren().add(new AnalyticsPage(budgetManager, month));
     }
 
     public void showSearchPage() {
+        currentPage = "search";
         mainContent.getChildren().clear();
         mainContent.getChildren().add(new SearchPage(budgetManager));
     }
 
     public void showAboutPage() {
+        currentPage = "about";
         mainContent.getChildren().clear();
         mainContent.getChildren().add(new AboutPage());
+    }
+
+    public void refreshCurrentPage(YearMonth month) {
+        switch (currentPage) {
+            case "analytics":
+                showAnalyticsPage(month);
+                break;
+            case "budget":
+                showBudgetPage();
+                break;
+            case "search":
+                showSearchPage();
+                break;
+            case "about":
+                showAboutPage();
+                break;
+            default:
+                showDashboardPage();
+                break;
+        }
     }
 
     public void setViewMode(boolean isTotal, SpendingCategory category) {

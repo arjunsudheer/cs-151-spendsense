@@ -58,6 +58,7 @@ public class SpendSenseApp extends Application implements BudgetObserver {
     private void onMonthChanged(YearMonth newMonth) {
         currentMonth = newMonth;
         loadMonthData(currentMonth);
+        centerPanel.refreshCurrentPage(currentMonth);
     }
 
     private void onCategorySelected(SpendingCategory category) {
